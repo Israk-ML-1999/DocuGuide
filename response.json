@@ -1,0 +1,42 @@
+{
+  "document_type": "Rental Agreement",
+  "key_sections": [
+    {
+      "section_name": "Payment Terms",
+      "contract_start": "2024-07-01",
+      "contract_end": "2025-06-30",
+      "Notice_Deadline":" 2024-05-31",
+      "Upcoming Renewal":" 2025-06-30",
+      "contract_value": "$24000",
+      "term_length": "",
+      "Payment_type": "cash",
+      "governing_law": "",
+      "location": "Section 3"
+    }
+  ],
+  "red_flags": [
+    {
+      "issue": "Automatic renewal without notice",
+      "severity": "High",
+      "location": "Section 8",
+      "explanation": "Could trap you in unwanted contract extension"
+    }
+  ],
+  "suggested_questions": [
+    {
+      "question": "What is the notice period for termination?",
+      "reason": "Protects you from penalties",
+      "section": "Termination Clause"
+    }
+  ],
+  "alternative_wordings": [
+    {
+      "original_clause": "Landlord may increase rent at any time",
+      "location": "Section 5",
+      "issue": "No limit on rent increases",
+      "suggested_wording": "Rent may be increased annually with 60 days notice, not to exceed 5% per year",
+      "benefit": "Protects from arbitrary rent hikes"
+    }
+  ],
+  "summary": "This is a standard rental agreement with some concerning clauses..."
+}
