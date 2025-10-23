@@ -57,14 +57,14 @@ class ContractAnalyzer:
     def _process_analysis_data(self, data: dict) -> dict:
         """Process analysis data to normalize dates and handle nulls"""
         try:
-            # Process key_sections for dates
-            if 'key_sections' in data:
-                for section in data['key_sections']:
-                    date_fields = ['contract_start', 'contract_end', 'Notice_Deadline', 'Upcoming_Renewal']
-                    for field in date_fields:
-                        if field in section and section[field]:
-                            normalized = self._normalize_date(str(section[field]))
-                            section[field] = normalized
+            # Process overall_section for dates
+            if 'overall_section' in data:
+                section = data['overall_section']
+                date_fields = ['contract_start', 'contract_end', 'Notice_Deadline', 'Upcoming_Renewal']
+                for field in date_fields:
+                    if field in section and section[field]:
+                        normalized = self._normalize_date(str(section[field]))
+                        section[field] = normalized
             
             return data
         except Exception as e:
@@ -82,18 +82,32 @@ Please provide your analysis in the following JSON structure. IMPORTANT: If any 
 
 {{
     "document_type": "Type of contract (e.g., Rental Agreement, Employment Contract, Service Agreement)",
-    "key_sections": [
+    "overall_section": {{
+        "section_name": "Overall Contract Summary",
+        "contract_start": "Contract start date in YYYY-MM-DD format or null",
+        "contract_end": "Contract end date in YYYY-MM-DD format or null",
+        "Notice_Deadline": "Notice deadline date in YYYY-MM-DD format or null",
+        "Upcoming_Renewal": "Upcoming renewal date in YYYY-MM-DD format or null",
+        "contract_value": "Total contract value with currency symbol (e.g., $24000) or null",
+        "term_length": "Length of contract term (e.g., 12 months, 2 years) or null",
+        "Payment_type": "Payment method (e.g., cash, check, bank transfer) or null",
+        "governing_law": "Governing law or jurisdiction or null"
+    }},
+    "sub_sections": [
         {{
-            "section_name": "Name of the section (e.g., Payment Terms, Term Duration, etc.)",
-            "contract_start": "Contract start date in YYYY-MM-DD format or null",
-            "contract_end": "Contract end date in YYYY-MM-DD format or null",
-            "Notice_Deadline": "Notice deadline date in YYYY-MM-DD format or null",
-            "Upcoming_Renewal": "Upcoming renewal date in YYYY-MM-DD format or null",
-            "contract_value": "Total contract value with currency symbol (e.g., $24000) or null",
-            "term_length": "Length of contract term (e.g., 12 months, 2 years) or null",
-            "Payment_type": "Payment method (e.g., cash, check, bank transfer) or null",
-            "governing_law": "Governing law or jurisdiction or null",
-            "location": "Where in document this section is found"
+            "section_name": "Name of important subsection",
+            "location": "Where in document (e.g., Section 3, Paragraph 2)",
+            "section_description": "Brief description of key information in this section (focus on important notices, obligations, fees, or critical details)"
+        }},
+        {{
+            "section_name": "Another important subsection",
+            "location": "Where in document",
+            "section_description": "Brief description of key information in this section"
+        }},
+        {{
+            "section_name": "Third important subsection",
+            "location": "Where in document",
+            "section_description": "Brief description of key information in this section"
         }}
     ],
     "red_flags": [
@@ -123,10 +137,11 @@ Please provide your analysis in the following JSON structure. IMPORTANT: If any 
 }}
 
 CRITICAL RULES:
-- Extract ALL dates and convert them to YYYY-MM-DD format
-- If a field is not mentioned in the contract, use null (not empty string)
-- Create multiple key_sections if there are different important sections
-- For contract_value, include currency symbol
+- Extract ALL dates from overall contract and convert them to YYYY-MM-DD format
+- overall_section should contain contract-wide information (dates, value, terms, payment, law)
+- Provide EXACTLY 3 sub_sections with important subsection names, locations, and descriptions
+- section_description should be 1-2 sentences highlighting the most important information, notices, obligations, or critical details from that section
+- If a field in overall_section is not mentioned in the contract, use null (not empty string)
 - Identify at least 3-5 red flags if present
 - Suggest at least 5 important questions
 - Provide at least 3 alternative wordings
@@ -166,7 +181,7 @@ CRITICAL RULES:
             prompt = f"""Please provide a concise summary of the following text. The summary should:
 - Capture the main points and key information
 - Be clear and easy to understand
-- Be approximately 10-15 sentences long
+- Be approximately 3-5 sentences long
 - Focus on the most important aspects
 
 Text to summarize:

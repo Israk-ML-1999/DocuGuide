@@ -4,7 +4,7 @@ from typing import List, Optional
 class AnalyzeRequest(BaseModel):
     contract_text: str
 
-class KeySection(BaseModel):
+class OverallSection(BaseModel):
     section_name: str
     contract_start: Optional[str] = None
     contract_end: Optional[str] = None
@@ -14,7 +14,11 @@ class KeySection(BaseModel):
     term_length: Optional[str] = None
     Payment_type: Optional[str] = None
     governing_law: Optional[str] = None
+
+class SubSection(BaseModel):
+    section_name: str
     location: str
+    section_description: str
 
 class RedFlag(BaseModel):
     issue: str
@@ -36,7 +40,8 @@ class AlternativeWording(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     document_type: str
-    key_sections: List[KeySection]
+    overall_section: OverallSection
+    sub_sections: List[SubSection]
     red_flags: List[RedFlag]
     suggested_questions: List[Question]
     alternative_wordings: List[AlternativeWording]
